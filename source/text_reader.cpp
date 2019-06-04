@@ -19,8 +19,8 @@ score text_reader::read()
     // 読み込んだ行を格納する
     string read_line = "";
 
-    regex note_re("([a-g])([+,-]*)([0-9]*)");
-    regex token_re("[a-g][+,-]*[0-9]*");
+    regex note_re("([a-g,r])([+,-]*)([0-9]*)");
+    regex token_re("[a-g,r][+,-]*[0-9]*");
 
     // 楽譜オブジェクト
     vector<note> score;
@@ -51,13 +51,14 @@ score text_reader::read()
             {
 
                 // 音符の構造体を作成
-                note note { d_length, d_octave * 12  };
+                note note { true, d_length, d_octave * 12  };
 
                 // 音名にあたるものがあれば
                 if(submatches[1].str() != "")
                 {
                     switch(submatches[1].str()[0])
                     {
+                        // 文字が音符だった場合
                         case 'a': note.scale += a; break;
                         case 'b': note.scale += b; break;
                         case 'c': note.scale += c; break;
@@ -65,12 +66,22 @@ score text_reader::read()
                         case 'e': note.scale += e; break;
                         case 'f': note.scale += f; break;
                         case 'g': note.scale += g; break;
+
+                        // 文字が休符だった場合
+                        case 'r': note.play = false; break;
                     }
                 }
 
                 // 半音にあたるものがあれば
                 if(submatches[2].str() != "")
                 {
+                    // 休符に半音記号はつかない
+                    if(submatches[1].str()[0] == 'r')
+                    {
+                        cerr << "cannot use sharp or flat with rest" << endl;
+                        exit -1;
+                    }
+
                     // 半音にあたる文字それぞれに対して処理
                     for(char c : submatches[2].str())
                     {

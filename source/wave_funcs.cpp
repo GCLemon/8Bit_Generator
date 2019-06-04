@@ -7,7 +7,7 @@ double get_freq(int scale)
 }
 
 // 50%パルス
-ubyte square_2(double x)
+double square_2(double x)
 {
     double i;
     x = modf(x, &i);
@@ -16,7 +16,7 @@ ubyte square_2(double x)
 }
 
 // 25%パルス
-ubyte square_4(double x)
+double square_4(double x)
 {
     double i;
     x = modf(x, &i);
@@ -25,7 +25,7 @@ ubyte square_4(double x)
 }
 
 // 12.5%パルス
-ubyte square_8(double x)
+double square_8(double x)
 {
     double i;
     x = modf(x, &i);
@@ -34,7 +34,7 @@ ubyte square_8(double x)
 }
 
 // 三角波
-ubyte triangle(double x)
+double triangle(double x)
 {
     double i;
     x = modf(x, &i);

@@ -48,6 +48,9 @@ enum half
 // 音符の情報を持つ型
 struct note
 {
+    // 音を鳴らすか
+    bool play;
+
     // 音長
     int length;
 
@@ -93,11 +96,11 @@ public:
 
 double get_freq(int scale); // 周波数を求める
 
-ubyte square_2(double x); // 50.0%パルス
-ubyte square_4(double x); // 25.0%パルス
-ubyte square_8(double x); // 12.5%パルス
-ubyte triangle(double x); // 三角波
-ubyte noise(double x);    // ノイズ
+double square_2(double x); // 50.0%パルス
+double square_4(double x); // 25.0%パルス
+double square_8(double x); // 12.5%パルス
+double triangle(double x); // 三角波
+double noise(double x);    // ノイズ
 
 #endif
 
