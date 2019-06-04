@@ -9,5 +9,5 @@ done
 
 g++ -O -o ../product/8bit ${source[@]}
 cd ../product
-./8bit
+./8bit test.eb
 cd ..

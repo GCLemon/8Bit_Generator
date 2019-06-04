@@ -30,7 +30,7 @@ void wave_writer::write(score score)
         // ファイルに書き込む値を取得
         note n = score.square_a[note_count];
         double f = n.play ? get_freq(n.scale) : 0;
-        ubyte v = 7500 * square_4(file_point / 44100.0 * f);
+        ubyte v = 5000 * square_4(file_point / 44100.0 * f);
 
         // ファイルに書き込み
         writer.write((char*)&v, 1);

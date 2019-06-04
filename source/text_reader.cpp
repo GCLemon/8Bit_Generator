@@ -10,7 +10,7 @@ text_reader::text_reader(string path)
     if(reader.fail())
     {
         cerr << "File open failed." << endl;
-        exit -1;
+        exit(-1);
     }
 }
 
@@ -19,8 +19,9 @@ score text_reader::read()
     // 読み込んだ行を格納する
     string read_line = "";
 
-    regex note_re("([a-g,r])([+,-]*)([0-9]*)");
-    regex token_re("[a-g,r][+,-]*[0-9]*");
+    regex n_re("([a-g,r])([+,-,^,v]*)([0-9]*)");
+    regex o_re("[<,>]|o([0-9])");
+    regex token_re("[a-g,r][+,-,^,v]*[0-9]*|[<,>]|o[0-9]");
 
     // 楽譜オブジェクト
     vector<note> score;
@@ -47,11 +48,12 @@ score text_reader::read()
             smatch submatches;
 
             // 検出したトークンが音符だったら
-            if(regex_match(token, submatches, note_re))
+            if(regex_match(token, submatches, n_re))
             {
-
                 // 音符の構造体を作成
                 note note { true, d_length, d_octave * 12  };
+
+                cout << submatches[0].str() << endl;
 
                 // 音名にあたるものがあれば
                 if(submatches[1].str() != "")
@@ -87,8 +89,10 @@ score text_reader::read()
                     {
                         switch(c)
                         {
-                            case '+': ++note.scale; break;
-                            case '-': --note.scale; break;
+                            case '+': ++note.scale;     break;
+                            case '-': --note.scale;     break;
+                            case '^': note.scale += 12; break;
+                            case 'v': note.scale -= 12; break;
                         }
                     }
                 }
@@ -101,10 +105,30 @@ score text_reader::read()
                 }
 
                 // 音符の内容を標準出力に表示
-                cout << "音名 : " << note.scale << "\t音長 : " << note.length << endl;
+                cout << "音高 : " << note.scale << "\t音長 : " << note.length << endl;
 
                 // 音符を楽譜オブジェクトに格納する
                 score.push_back(note);
+            }
+
+            // 検出したトークンが音高関係のものだった場合
+            else if(regex_match(token, submatches, o_re))
+            {
+                switch(submatches[0].str()[0])
+                {
+                    // 大なり記号ならばオクターブを上げる
+                    case '<' : ++d_octave; break;
+
+                    // 小なり記号ならばオクターブを下げる
+                    case '>' : --d_octave; break;
+
+                    // oならば指定されたオクターブに設定
+                    case 'o' : 
+                        if(submatches[1].str() != "")
+                        {
+                            d_octave = stoi(submatches[1].str());
+                        }
+                }
             }
         }
     }

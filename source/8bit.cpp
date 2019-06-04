@@ -2,7 +2,9 @@
 
 int main(int argc, char** argv)
 {
-    text_reader reader("test.eb");
+    string path = argv[1];
+    text_reader reader(path);
+    path = path.replace(path.length() - 4, 4, ".wav");
     wave_writer writer("test.wav");
 
     writer.write(reader.read());
