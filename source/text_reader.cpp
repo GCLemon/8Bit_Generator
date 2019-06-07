@@ -50,8 +50,8 @@ score text_reader::read()
             // 検出したトークンが音符だったら
             if(regex_match(token, submatches, n_re))
             {
-                // 音符の構造体を作成
-                note note { true, d_length, d_octave * 12  };
+                // 音符の構造体を作成 
+                note note { { 4, d_length }, d_octave * 12, true };
 
                 cout << submatches[0].str() << endl;
 
@@ -81,7 +81,7 @@ score text_reader::read()
                     if(submatches[1].str()[0] == 'r')
                     {
                         cerr << "cannot use sharp or flat with rest" << endl;
-                        exit -1;
+                        exit(-1);
                     }
 
                     // 半音にあたる文字それぞれに対して処理
@@ -101,11 +101,11 @@ score text_reader::read()
                 if(submatches[3].str() != "")
                 {
                     // 指定された音長だけ音符の位置を進める
-                    note.length = stoi(submatches[3].str());
+                    note.length = { 4, stoi(submatches[3].str()) };
                 }
 
                 // 音符の内容を標準出力に表示
-                cout << "音高 : " << note.scale << "\t音長 : " << note.length << endl;
+                cout << "音高 : " << note.scale << "\t音長 : " << note.length.to_double() << endl;
 
                 // 音符を楽譜オブジェクトに格納する
                 score.push_back(note);

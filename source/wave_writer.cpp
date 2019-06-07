@@ -10,16 +10,19 @@ wave_writer::wave_writer(string path)
     if(writer.fail())
     {
         cerr << "File open failed." << endl;
-        exit -1;
+        exit(-1);
     }
 }
+
+// ファイルポインタが指定された位置を超えたか
+#define isover(point) (point) * tempo / 2646000.0 > (position + n.length).to_double()
 
 void wave_writer::write(score score)
 {
     writer.seekp(44);
 
-    double tempo = 120;
-    double position = 0;
+    double   tempo = 120;
+    rational position = { 0, 1 };
 
     uint  file_point = 0;
     int   note_count  = 0;
@@ -32,6 +35,10 @@ void wave_writer::write(score score)
         double f = n.play ? get_freq(n.scale) : 0;
         ubyte v = 5000 * square_4(file_point / 44100.0 * f);
 
+        // 音符の末端の約17ms前に差し掛かったら
+        // 音符を区切る
+        if(isover(file_point + 256)) v = (ubyte)5000;
+
         // ファイルに書き込み
         writer.write((char*)&v, 1);
 
@@ -40,10 +47,10 @@ void wave_writer::write(score score)
 
         // 現在のファイルポインタのカウンタから拍子を導出した時
         // 音符の末端を過ぎていたら
-        if(file_point * tempo / 2646000.0 > position + 4.0 / n.length)
+        if(isover(file_point))
         {
             ++note_count;
-            position += 4.0 / n.length;
+            position += n.length;
             if(note_count >= score.square_a.size())
             {
                 break;

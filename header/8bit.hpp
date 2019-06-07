@@ -6,12 +6,14 @@
 #ifndef eight_bit
 #define eight_git
 
-#include <cmath>    // 数学系のあれこれ
-#include <fstream>  // ファイル入出力周り
-#include <iostream> // 標準入出力周り
-#include <regex>    // 正規表現
-#include <string>   // 文字列
-#include <vector>   // 動的配列
+#include <cmath>        // 数学系のあれこれ
+#include <fstream>      // ファイル入出力周り
+#include <iostream>     // 標準入出力周り
+#include <regex>        // 正規表現
+#include <string>       // 文字列
+#include <vector>       // 動的配列
+
+#include "rational.hpp" // 自作の有理数型
 
 using namespace std;
 
@@ -48,14 +50,14 @@ enum half
 // 音符の情報を持つ型
 struct note
 {
-    // 音を鳴らすか
-    bool play;
-
     // 音長
-    int length;
+    rational length;
 
     // 始点の音階
     int scale;
+
+    // 音を鳴らすか
+    bool play;
 };
 
 
