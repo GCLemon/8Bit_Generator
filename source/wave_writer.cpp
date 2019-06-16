@@ -14,50 +14,16 @@ wave_writer::wave_writer(string path)
     }
 }
 
-// ファイルポインタが指定された位置を超えたか
-#define isover(point) (point) * tempo / 2646000.0 > (position + n.length).to_double()
-
 void wave_writer::write(score score)
 {
-    writer.seekp(44);
+    raw_score = score;
 
-    double   tempo = 120;
-    rational position = { 0, 1 };
+    write_wave();
+    write_header();
+}
 
-    uint  file_point = 0;
-    int   note_count  = 0;
-    int   octave = 4;
-
-    while(true)
-    {
-        // ファイルに書き込む値を取得
-        note n = score.square_a[note_count];
-        double f = n.play ? get_freq(n.scale) : 0;
-        ubyte v = 5000 * square_4(file_point / 44100.0 * f);
-
-        // 音符の末端の約17ms前に差し掛かったら
-        // 音符を区切る
-        if(isover(file_point + 256)) v = (ubyte)5000;
-
-        // ファイルに書き込み
-        writer.write((char*)&v, 1);
-
-        // ファイルポインタをインクリメント
-        ++file_point;
-
-        // 現在のファイルポインタのカウンタから拍子を導出した時
-        // 音符の末端を過ぎていたら
-        if(isover(file_point))
-        {
-            ++note_count;
-            position += n.length;
-            if(note_count >= score.square_a.size())
-            {
-                break;
-            }
-        }
-    }
-
+void wave_writer::write_header()
+{
     writer.seekp(0);
 
     // RIFFヘッダ
@@ -114,4 +80,47 @@ void wave_writer::write(score score)
 
     // ファイルを閉じる
     writer.close();
+}
+
+void wave_writer::write_wave()
+{
+    writer.seekp(44);
+
+    while(true)
+    {
+        // ファイルに書き込む値を取得
+        note note = raw_score.square_a[note_count];
+        double freq = note.play ? get_freq(note.scale) : 0;
+        ubyte volume = 5000 * square_4(file_point / 44100.0 * freq);
+
+        // 音符の末端の約17ms前に差し掛かったら
+        // 音符を区切る
+        if(isover(file_point + 256, note)) volume = (ubyte)5000;
+
+        // ファイルに書き込み
+        writer.write((char*)&volume, 1);
+
+        // ファイルポインタをインクリメント
+        ++file_point;
+
+        // 現在のファイルポインタのカウンタから拍子を導出した時
+        // 音符の末端を過ぎていたら
+        if(isover(file_point, note))
+        {
+            ++note_count;
+            if(note_count >= raw_score.square_a.size())
+            {
+                break;
+            }
+        }
+    }
+}
+
+bool wave_writer::isover(uint point, note note)
+{
+    // ビート数を計算
+    rational beat1 = { (int)point * tempo, 2646000 };
+    rational beat2 = (note.positon + note.length) * 4;
+
+    return beat1 > beat2;
 }

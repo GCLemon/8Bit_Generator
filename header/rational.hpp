@@ -1,3 +1,9 @@
+//////////////////////////////////////////////////
+//
+//    rational.hpp
+//
+
+
 #ifndef rational_hpp
 #define rational_hpp
 

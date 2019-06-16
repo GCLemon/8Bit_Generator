@@ -50,8 +50,8 @@ enum half
 // 音符の情報を持つ型
 struct note
 {
-    // 音長
-    rational length;
+    rational positon; // 音符の位置
+    rational length;  // 音長
 
     // 始点の音階
     int scale;
@@ -75,12 +75,42 @@ struct score
 class text_reader
 {
 private:
+
+    // 入力ファイルストリーム
     ifstream reader;
 
+    // デフォルトの音長・オクターブ
+    int default_length = 4;
+    int default_octave = 4;
+
+    // 音符の位置
+    rational position = { 0, 4 };
+
+    // 楽譜オブジェクト
+    score raw_score =
+    {
+        vector<note>(),
+        vector<note>(),
+        vector<note>(),
+        vector<note>()
+    };
+
+    // 楽譜に音符を追加する
+    void add_note(smatch submathces);
+
+    // オクターブを変更する
+    void set_octave(smatch submatches);
+
 public:
+
+    // コンストラクタ
     text_reader(string path);
 
-    score read();
+    // テキストファイルから楽譜に変換する
+    void read();
+
+    // 楽譜を取得する
+    score get_score();
 };
 
 
@@ -88,11 +118,39 @@ public:
 class wave_writer
 {
 private:
+
+    int   tempo = 120; // テンポ[bpm.]
+
+    uint  file_point = 0; // ファイルのポインタ
+    int   note_count = 0; // scoreオブジェクト内の楽譜のリスト番号
+
+    // 出力ファイルストリーム
     ofstream writer;
 
+    // 楽譜オブジェクト
+    score raw_score =
+    {
+        vector<note>(),
+        vector<note>(),
+        vector<note>(),
+        vector<note>()
+    };
+
+    // ヘッダを書き込む
+    void write_header();
+
+    // 波データを書き込む
+    void write_wave();
+
+    // ファイルポインタが指定された位置を超えたか
+    bool isover(uint point, note note);
+
 public:
+
+    // コンストラクタ
     wave_writer(string path);
 
+    // wavファイルに出力する
     void write(score score);
 };
 
@@ -105,12 +163,3 @@ double triangle(double x); // 三角波
 double noise(double x);    // ノイズ
 
 #endif
-
-/* 
- * <ToDo>
- * 
- * 5/21(火)
- * ・簡単な楽譜を作成し,それを解析した結果を標準出力で表示する
- * ・解析した結果をwavファイルに出力する
- * 
- */

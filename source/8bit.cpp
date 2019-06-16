@@ -4,8 +4,10 @@ int main(int argc, char** argv)
 {
     string path = argv[1];
     text_reader reader(path);
-    path = path.replace(path.length() - 4, 4, ".wav");
-    wave_writer writer("test.wav");
+    path = path.replace(path.length() - 3, 3, ".wav");
+    wave_writer writer(path);
 
-    writer.write(reader.read());
+    reader.read();
+    score s = reader.get_score();
+    writer.write(s);
 }
