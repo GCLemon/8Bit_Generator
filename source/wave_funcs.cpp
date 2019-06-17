@@ -12,7 +12,7 @@ double square_2(double x)
     double i;
     x = modf(x, &i);
     if(x < 0) ++x;
-    return (x <= 0.5) ? 1 : 0;
+    return (x <= 0.5) ? 0 : 1;
 }
 
 // 25%パルス
@@ -21,7 +21,7 @@ double square_4(double x)
     double i;
     x = modf(x, &i);
     if(x < 0) ++x;
-    return (x <= 0.25) ? 1 : 0;
+    return (x <= 0.25) ? 0 : 1;
 }
 
 // 12.5%パルス
@@ -30,7 +30,7 @@ double square_8(double x)
     double i;
     x = modf(x, &i);
     if(x < 0) ++x;
-    return (x <= 0.125) ? 1 : 0;
+    return (x <= 0.125) ? 0 : 1;
 }
 
 // 三角波

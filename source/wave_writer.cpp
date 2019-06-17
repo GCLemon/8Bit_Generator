@@ -16,10 +16,11 @@ wave_writer::wave_writer(string path)
 
 void wave_writer::write(score score)
 {
+    // 楽譜をセットする
     raw_score = score;
 
-    write_wave();
-    write_header();
+    write_wave();   // 波データを書き込む
+    write_header(); // ファイルヘッダを書き込む
 }
 
 void wave_writer::write_header()
@@ -89,13 +90,19 @@ void wave_writer::write_wave()
     while(true)
     {
         // ファイルに書き込む値を取得
+
+        // 音符の情報を取得
         note note = raw_score.square_a[note_count];
-        double freq = note.play ? get_freq(note.scale) : 0;
-        ubyte volume = 5000 * square_4(file_point / 44100.0 * freq);
+
+        // 音高から周波数を計算
+        double freq = get_freq(note.scale);
+
+        // 書き込むバイト数値を計算
+        ubyte volume = note.volume / 2 * square_4(file_point / 44100.0 * freq);
 
         // 音符の末端の約17ms前に差し掛かったら
         // 音符を区切る
-        if(isover(file_point + 256, note)) volume = (ubyte)5000;
+        if(isover(file_point + 256, note)) volume = 0;
 
         // ファイルに書き込み
         writer.write((char*)&volume, 1);

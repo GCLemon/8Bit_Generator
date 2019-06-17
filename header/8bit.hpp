@@ -53,11 +53,8 @@ struct note
     rational positon; // 音符の位置
     rational length;  // 音長
 
-    // 始点の音階
-    int scale;
-
-    // 音を鳴らすか
-    bool play;
+    int scale;  // 音階
+    int volume; // 音量
 };
 
 
@@ -82,6 +79,7 @@ private:
     // デフォルトの音長・オクターブ
     int default_length = 4;
     int default_octave = 4;
+    int default_volume = 100;
 
     // 音符の位置
     rational position = { 0, 4 };
@@ -95,9 +93,11 @@ private:
         vector<note>()
     };
 
-    void add_note(smatch submathces);   // 楽譜に音符を追加する
+    void add_note  (smatch submathces);   // 楽譜に音符を追加する
+    void add_rest  (smatch submathces);   // 楽譜に休符を追加する
     void set_octave(smatch submatches); // オクターブを変更する
-    void set_length(smatch submatches);
+    void set_length(smatch submatches); // 音長を変更する
+    void set_volume(smatch submatches); // 音量を変更する
 
 public:
 
