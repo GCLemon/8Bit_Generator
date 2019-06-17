@@ -95,11 +95,9 @@ private:
         vector<note>()
     };
 
-    // 楽譜に音符を追加する
-    void add_note(smatch submathces);
-
-    // オクターブを変更する
-    void set_octave(smatch submatches);
+    void add_note(smatch submathces);   // 楽譜に音符を追加する
+    void set_octave(smatch submatches); // オクターブを変更する
+    void set_length(smatch submatches);
 
 public:
 
@@ -136,11 +134,8 @@ private:
         vector<note>()
     };
 
-    // ヘッダを書き込む
-    void write_header();
-
-    // 波データを書き込む
-    void write_wave();
+    void write_header(); // ヘッダを書き込む
+    void write_wave();   // 波データを書き込む
 
     // ファイルポインタが指定された位置を超えたか
     bool isover(uint point, note note);

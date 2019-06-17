@@ -20,13 +20,15 @@ void text_reader::read()
     string read_line = "";
 
     // 音符に関する正規表現
-    string n_str = "([a-g,r])([+,-,^,v]*)([0-9]*)";
-    string o_str = "[<,>]|o([0-9])";
+    string n_str = "([a-g,r])([+,-,^,v]*)([0-9]*)([/,_,.]*)";
+    string o_str = "[<,>]|o([0-9]+)";
+    string l_str = "l([0-9]+)";
 
     // トークンを検出する正規表現オブジェクト
     regex n_re(n_str);
     regex o_re(o_str);
-    regex token_regex(n_str + "|" + o_str);
+    regex l_re(l_str);
+    regex token_regex(n_str + "|" + o_str + "|" + l_str);
 
     // テキストファイルの各行について処理
     while(getline(reader, read_line))
@@ -46,8 +48,11 @@ void text_reader::read()
             // 検出したトークンが音符を表していた場合
             if(regex_match(token_str, submatches, n_re)) add_note(submatches);
             
-            // 検出したトークンが音符を表していた場合
+            // 検出したトークンが音高を表していた場合
             if(regex_match(token_str, submatches, o_re)) set_octave(submatches);
+
+            // 検出したトークンが音長を表していた場合
+            if(regex_match(token_str, submatches, l_re)) set_length(submatches);
         }
     }
 }
@@ -108,12 +113,30 @@ void text_reader::add_note(smatch submatches)
         // 音長を指定する
         length = { 1, stoi(submatches[3].str()) };
 
+    // 音長を変更する記号があれば
+    if(submatches[4].str() != "")
+    {
+        // 音長にあたる文字それぞれに対して処理
+        for(char c : submatches[4].str())
+        {
+            switch(c)
+            {
+                case '_': length *= 2; break;
+                case '/': length /= 2; break;
+                case '.': length *= { 3, 2 }; break;
+            }
+        }
+    }
+
     // 指定された音長だけ音符の位置を進める
     position += length;
     note.length = length;
 
     // 音符の内容を標準出力に表示
-    cout << "音高 : " << note.scale << "\t音長 : " << length.to_double() << endl;
+    std::cout
+        << "音高 : " << note.scale
+        << "\t音長 : " << length.to_double()
+        << std::endl;
 
     // 音符を楽譜オブジェクトに格納する
     raw_score.square_a.push_back(note);
@@ -135,6 +158,12 @@ void text_reader::set_octave(smatch submatches)
             if(submatches[1].str() != "")
                 default_octave = stoi(submatches[1].str());
     }
+}
+
+void text_reader::set_length(smatch submatches)
+{
+    // 指定された音長を設定
+    default_length = stoi(submatches[1].str());
 }
 
 score text_reader::get_score() { return raw_score; }
