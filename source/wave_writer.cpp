@@ -221,6 +221,7 @@ void wave_writer::write_square_b()
 void wave_writer::write_triangle()
 {
     writer.seekp(44);
+    reader.seekg(44);
 
     if(raw_score.triangle.size() == 0) return;
 

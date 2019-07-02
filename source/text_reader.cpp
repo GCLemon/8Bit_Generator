@@ -268,12 +268,6 @@ void text_reader::add_note(smatch submatches, track track)
     }
     note.length = length;
 
-    // 音符の内容を標準出力に表示
-    std::cout
-        << "音高 : " << note.scale
-        << "\t音長 : " << length.to_double()
-        << std::endl;
-
     // 音符を楽譜オブジェクトに格納する
     switch(track)
     {
@@ -424,12 +418,6 @@ void text_reader::add_rest(smatch submatches, track track)
             break;
     }
     note.length = length;
-
-    // 音符の内容を標準出力に表示
-    std::cout
-        << "音高 : " << note.scale
-        << "\t音長 : " << length.to_double()
-        << std::endl;
 
     // 音符を楽譜オブジェクトに格納する
     switch(track)
