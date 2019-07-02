@@ -25,6 +25,15 @@ typedef unsigned int   uint;   // 符号なし4バイト整数
 typedef unsigned long  ulong;  // 符号なし8バイト整数
 
 
+// トラック
+enum track
+{
+    Square_A, // 矩形波トラックA
+    Square_B, // 矩形波トラックB
+    Triangle, // 三角波トラック
+    Noise     // ノイズトラック
+};
+
 // 音階
 enum scale
 {
@@ -37,7 +46,6 @@ enum scale
     b = 2,  // シ
 };
 
-
 // 半音
 enum half
 {
@@ -46,17 +54,28 @@ enum half
     sharp = 1    // ♯
 };
 
+// 音の種類
+enum instrument
+{
+    square_2, // 50%パルス
+    square_4, // 25%パルス
+    square_8, // 12.5%パルス
+    triangle, // 三角波
+    noise     // ノイズ
+};
+
 
 // 音符の情報を持つ型
 struct note
 {
+    instrument sound; // 音の種類
+
     rational positon; // 音符の位置
     rational length;  // 音長
 
     int scale;  // 音階
     int volume; // 音量
 };
-
 
 // 楽譜の情報を持つ型
 struct score
@@ -65,6 +84,19 @@ struct score
     vector<note> square_b; // 矩形波トラックB
     vector<note> triangle; // 三角波トラック
     vector<note> noise;    // ノイズトラック
+};
+
+// トラックごとのデフォルト値
+struct default_value
+{
+    int default_length = 4;
+    int default_octave = 4;
+    int default_volume = 100;
+
+    // 音符の位置
+    rational position = { 0, 4 };
+
+    instrument default_sound = instrument::square_4;
 };
 
 
@@ -77,12 +109,11 @@ private:
     ifstream reader;
 
     // デフォルトの音長・オクターブ
-    int default_length = 4;
-    int default_octave = 4;
-    int default_volume = 100;
+    default_value square_a = { 4, 4, 100, {0, 4}, instrument::square_4 };
+    default_value square_b = { 4, 4, 100, {0, 4}, instrument::square_4 };
+    default_value triangle = { 4, 4, 100, {0, 4}, instrument::triangle };
+    default_value noise;
 
-    // 音符の位置
-    rational position = { 0, 4 };
 
     // 楽譜オブジェクト
     score raw_score =
@@ -93,11 +124,13 @@ private:
         vector<note>()
     };
 
-    void add_note  (smatch submathces);   // 楽譜に音符を追加する
-    void add_rest  (smatch submathces);   // 楽譜に休符を追加する
-    void set_octave(smatch submatches); // オクターブを変更する
-    void set_length(smatch submatches); // 音長を変更する
-    void set_volume(smatch submatches); // 音量を変更する
+    void add_note  (smatch submathces, track track); // 楽譜に音符を追加する
+    void add_rest  (smatch submathces, track track); // 楽譜に休符を追加する
+    void set_octave(smatch submatches, track track); // オクターブを変更する
+    void set_length(smatch submatches, track track); // 音長を変更する
+    void set_volume(smatch submatches, track track); // 音量を変更する
+
+    void set_instrument(smatch submatches, track track);
 
 public:
 
@@ -119,11 +152,14 @@ private:
 
     int   tempo = 120; // テンポ[bpm.]
 
-    uint  file_point = 0; // ファイルのポインタ
+    uint  file_point_a = 0; // ファイルのポインタ
+    uint  file_point_b = 0;
+    uint  file_point_c = 0;
     int   note_count = 0; // scoreオブジェクト内の楽譜のリスト番号
 
-    // 出力ファイルストリーム
+    // ファイルストリーム
     ofstream writer;
+    ifstream reader;
 
     // 楽譜オブジェクト
     score raw_score =
@@ -136,6 +172,10 @@ private:
 
     void write_header(); // ヘッダを書き込む
     void write_wave();   // 波データを書き込む
+
+    void write_square_a();
+    void write_square_b();
+    void write_triangle();
 
     // ファイルポインタが指定された位置を超えたか
     bool isover(uint point, note note);
@@ -151,10 +191,10 @@ public:
 
 double get_freq(int scale); // 周波数を求める
 
-double square_2(double x); // 50.0%パルス
-double square_4(double x); // 25.0%パルス
-double square_8(double x); // 12.5%パルス
-double triangle(double x); // 三角波
-double noise(double x);    // ノイズ
+double wave_square_2(double x); // 50.0%パルス
+double wave_square_4(double x); // 25.0%パルス
+double wave_square_8(double x); // 12.5%パルス
+double wave_triangle(double x); // 三角波
+double wave_noise(double x);    // ノイズ
 
 #endif

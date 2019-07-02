@@ -4,10 +4,11 @@ wave_writer::wave_writer(string path)
 {
     // インスタンスを代入
     writer = ofstream(path, ios::binary);
+    reader = ifstream(path, ios::binary);
 
     // ファイルを開くことに失敗した場合は
     // プログラムを終了させる
-    if(writer.fail())
+    if(writer.fail() || reader.fail())
     {
         cerr << "File open failed." << endl;
         exit(-1);
@@ -27,13 +28,15 @@ void wave_writer::write_header()
 {
     writer.seekp(0);
 
+    uint filesize = max(max(file_point_a, file_point_b), file_point_c);
+
     // RIFFヘッダ
     char riff[] = { 'R', 'I', 'F', 'F' };
     writer.write(riff, 4);
 
     // ファイルサイズ
-    file_point += 36;
-    writer.write((char*)&file_point, 4);
+    filesize += 36;
+    writer.write((char*)&filesize, 4);
 
     // WAVEヘッダ
     char wave[] = { 'W', 'A', 'V', 'E' };
@@ -76,8 +79,8 @@ void wave_writer::write_header()
     writer.write(data, 4);
 
     // 波データのサイズ
-    file_point -= 36;
-    writer.write((char*)&file_point, 4);
+    filesize -= 36;
+    writer.write((char*)&filesize, 4);
 
     // ファイルを閉じる
     writer.close();
@@ -85,7 +88,19 @@ void wave_writer::write_header()
 
 void wave_writer::write_wave()
 {
+    note_count = 0;
+    write_square_a();
+    note_count = 0;
+    write_square_b();
+    note_count = 0;
+    write_triangle();
+}
+
+void wave_writer::write_square_a()
+{
     writer.seekp(44);
+
+    if(raw_score.square_a.size() == 0) return;
 
     while(true)
     {
@@ -98,24 +113,166 @@ void wave_writer::write_wave()
         double freq = get_freq(note.scale);
 
         // 書き込むバイト数値を計算
-        ubyte volume = note.volume / 2 * square_4(file_point / 44100.0 * freq);
+        ubyte volume = note.volume / 2;
+        switch(note.sound)
+        {
+            case instrument::square_2:
+                volume *= wave_square_2(file_point_a / 44100.0 * freq);
+                break;
+            case instrument::square_4:
+                volume *= wave_square_4(file_point_a / 44100.0 * freq);
+                break;
+            case instrument::square_8:
+                volume *= wave_square_8(file_point_a / 44100.0 * freq);
+                break;
+            case instrument::triangle:
+                volume *= wave_triangle(file_point_a / 44100.0 * freq);
+                break;
+            case instrument::noise:
+                break;
+        }
 
         // 音符の末端の約17ms前に差し掛かったら
         // 音符を区切る
-        if(isover(file_point + 256, note)) volume = 0;
+        if(isover(file_point_a + 256, note)) volume = 0;
 
         // ファイルに書き込み
         writer.write((char*)&volume, 1);
 
         // ファイルポインタをインクリメント
-        ++file_point;
+        ++file_point_a;
 
         // 現在のファイルポインタのカウンタから拍子を導出した時
         // 音符の末端を過ぎていたら
-        if(isover(file_point, note))
+        if(isover(file_point_a, note))
         {
             ++note_count;
             if(note_count >= raw_score.square_a.size())
+            {
+                break;
+            }
+        }
+    }
+}
+
+void wave_writer::write_square_b()
+{
+    writer.seekp(44);
+    reader.seekg(44);
+
+    if(raw_score.square_b.size() == 0) return;
+
+    while(true)
+    {
+        // ファイルに書き込む値を取得
+
+        // 音符の情報を取得
+        note note = raw_score.square_b[note_count];
+
+        // 音高から周波数を計算
+        double freq = get_freq(note.scale);
+
+        // 書き込むバイト数値を計算
+        ubyte volume = note.volume / 2;
+        switch(note.sound)
+        {
+            case instrument::square_2:
+                volume *= wave_square_2(file_point_b / 44100.0 * freq);
+                break;
+            case instrument::square_4:
+                volume *= wave_square_4(file_point_b / 44100.0 * freq);
+                break;
+            case instrument::square_8:
+                volume *= wave_square_8(file_point_b / 44100.0 * freq);
+                break;
+            case instrument::triangle:
+                volume *= wave_triangle(file_point_b / 44100.0 * freq);
+                break;
+            case instrument::noise:
+                break;
+        }
+
+        // 音符の末端の約17ms前に差し掛かったら
+        // 音符を区切る
+        if(isover(file_point_b + 256, note)) volume = 0;
+
+        // ファイルに書き込み
+        ubyte v;
+        reader.read((char*)&v, 1);
+        volume += v;
+        writer.write((char*)&volume, 1);
+
+        // ファイルポインタをインクリメント
+        ++file_point_b;
+
+        // 現在のファイルポインタのカウンタから拍子を導出した時
+        // 音符の末端を過ぎていたら
+        if(isover(file_point_b, note))
+        {
+            ++note_count;
+            if(note_count >= raw_score.square_b.size())
+            {
+                break;
+            }
+        }
+    }
+}
+
+void wave_writer::write_triangle()
+{
+    writer.seekp(44);
+
+    if(raw_score.triangle.size() == 0) return;
+
+    while(true)
+    {
+        // ファイルに書き込む値を取得
+
+        // 音符の情報を取得
+        note note = raw_score.triangle[note_count];
+
+        // 音高から周波数を計算
+        double freq = get_freq(note.scale);
+
+        // 書き込むバイト数値を計算
+        ubyte volume = note.volume / 2;
+        switch(note.sound)
+        {
+            case instrument::square_2:
+                volume *= wave_square_2(file_point_c / 44100.0 * freq);
+                break;
+            case instrument::square_4:
+                volume *= wave_square_4(file_point_c / 44100.0 * freq);
+                break;
+            case instrument::square_8:
+                volume *= wave_square_8(file_point_c / 44100.0 * freq);
+                break;
+            case instrument::triangle:
+                volume *= wave_triangle(file_point_c / 44100.0 * freq);
+                break;
+            case instrument::noise:
+                break;
+        }
+
+        // 音符の末端の約17ms前に差し掛かったら
+        // 音符を区切る
+        if(isover(file_point_c + 256, note)) volume = 0;
+
+        // ファイルに書き込み
+        ubyte v;
+        reader.read((char*)&v, 1);
+        volume += v;
+        writer.write((char*)&volume, 1);
+
+        // ファイルポインタをインクリメント
+        ++file_point_c;
+
+        // 現在のファイルポインタのカウンタから拍子を導出した時
+        // 音符の末端を過ぎていたら
+        if(isover(file_point_c, note))
+        {
+            ++note_count;
+            if(note_count >= raw_score.triangle.size())
             {
                 break;
             }

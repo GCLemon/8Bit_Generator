@@ -25,6 +25,7 @@ void text_reader::read()
     string o_str = "[<,>]|o([0-9]+)";
     string l_str = "l([0-9]+)";
     string v_str = "v([0-9]+)";
+    string at_i_str = "@i([0-9]+)";
 
     // トークンを検出する正規表現オブジェクト
     regex n_re(n_str);
@@ -32,11 +33,27 @@ void text_reader::read()
     regex o_re(o_str);
     regex l_re(l_str);
     regex v_re(v_str);
-    regex token_regex(n_str + "|" + r_str + "|" + o_str + "|" + l_str + "|" + v_str);
+    regex at_i_re(at_i_str);
+    regex token_regex(
+        n_str + "|" +
+        r_str + "|" +
+        o_str + "|" +
+        l_str + "|" +
+        v_str + "|" +
+        at_i_str
+    );
 
     // テキストファイルの各行について処理
     while(getline(reader, read_line))
     {
+        track current_track;
+        switch(read_line[0])
+        {
+            case 'A': current_track = track::Square_A; break;
+            case 'B': current_track = track::Square_B; break;
+            case 'C': current_track = track::Triangle; break;
+        }
+
         // 文字列の先頭と終端を取得
         auto bg = begin(read_line), en = end(read_line);
 
@@ -50,30 +67,91 @@ void text_reader::read()
             smatch submatches;
 
             // 検出したトークンが音符を表していた場合
-            if(regex_match(token_str, submatches, n_re)) add_note(submatches);
+            if(regex_match(token_str, submatches, n_re))
+                add_note(submatches, current_track);
 
             // 検出したトークンが休符を表していた場合
-            if(regex_match(token_str, submatches, r_re)) add_rest(submatches);
+            if(regex_match(token_str, submatches, r_re))
+                add_rest(submatches, current_track);
             
             // 検出したトークンが音高を表していた場合
-            if(regex_match(token_str, submatches, o_re)) set_octave(submatches);
+            if(regex_match(token_str, submatches, o_re))
+                set_octave(submatches, current_track);
 
             // 検出したトークンが音長を表していた場合
-            if(regex_match(token_str, submatches, l_re)) set_length(submatches);
+            if(regex_match(token_str, submatches, l_re))
+                set_length(submatches, current_track);
 
             // 検出したトークンが音量を表していた場合
-            if(regex_match(token_str, submatches, v_re)) set_volume(submatches);
+            if(regex_match(token_str, submatches, v_re))
+                set_volume(submatches, current_track);
+
+            // 検出したトークンが音量を表していた場合
+            if(regex_match(token_str, submatches, at_i_re))
+                set_instrument(submatches, current_track);
         }
     }
 }
 
-void text_reader::add_note(smatch submatches)
+void text_reader::add_note(smatch submatches, track track)
 {
-    // 音長
+    // デフォルトの値を設定
+    int default_length, default_octave, default_volume;
+    switch(track)
+    {
+        case Square_A:
+            default_length = square_a.default_length;
+            default_octave = square_a.default_octave;
+            default_volume = square_a.default_volume;
+            break;
+        case Square_B:
+            default_length = square_b.default_length;
+            default_octave = square_b.default_octave;
+            default_volume = square_b.default_volume;
+            break;
+        case Triangle: 
+            default_length = triangle.default_length;
+            default_octave = triangle.default_octave;
+            default_volume = triangle.default_volume;
+            break;
+    }
     rational length = { 1, default_length };
 
     // 音符を作成する
-    note note = { position, length, default_octave * 12, default_volume };
+    note note;
+    switch(track)
+    {
+        case Square_A:
+            note =
+            {
+                square_a.default_sound,
+                square_a.position,
+                length,
+                default_octave * 12,
+                default_volume
+            };
+            break;
+        case Square_B:
+            note =
+            {
+                square_b.default_sound,
+                square_b.position,
+                length,
+                default_octave * 12,
+                default_volume
+            };
+            break;
+        case Triangle: 
+            note =
+            {
+                triangle.default_sound,
+                triangle.position,
+                length,
+                default_octave * 12,
+                default_volume
+            };
+            break;
+    }
 
     // 音名にあたるものがあれば
     if(submatches[1].str() != "")
@@ -176,7 +254,18 @@ void text_reader::add_note(smatch submatches)
     }
 
     // 指定された音長だけ音符の位置を進める
-    position += length;
+    switch(track)
+    {
+        case Square_A:
+            square_a.position += length;
+            break;
+        case Square_B:
+            square_b.position += length;
+            break;
+        case Triangle: 
+            triangle.position += length;
+            break;
+    }
     note.length = length;
 
     // 音符の内容を標準出力に表示
@@ -186,16 +275,75 @@ void text_reader::add_note(smatch submatches)
         << std::endl;
 
     // 音符を楽譜オブジェクトに格納する
-    raw_score.square_a.push_back(note);
+    switch(track)
+    {
+        case Square_A:
+            raw_score.square_a.push_back(note);
+            break;
+        case Square_B:
+            raw_score.square_b.push_back(note);
+            break;
+        case Triangle: 
+            raw_score.triangle.push_back(note);
+            break;
+    }
 }
 
-void text_reader::add_rest(smatch submatches)
+void text_reader::add_rest(smatch submatches, track track)
 {
+    // デフォルトの値を設定
+    int default_length;
+    switch(track)
+    {
+        case Square_A:
+            default_length = square_a.default_length;
+            break;
+        case Square_B:
+            default_length = square_b.default_length;
+            break;
+        case Triangle: 
+            default_length = triangle.default_length;
+            break;
+    }
+
     // 音長
     rational length = { 1, default_length };
 
     // 休符を作成する
-    note note = { position, length, 0, 0 };
+    note note;
+    switch(track)
+    {
+        case Square_A:
+            note =
+            {
+                square_a.default_sound,
+                square_a.position,
+                length,
+                0,
+                0
+            };
+            break;
+        case Square_B:
+            note =
+            {
+                square_b.default_sound,
+                square_b.position,
+                length,
+                0,
+                0
+            };
+            break;
+        case Triangle: 
+            note =
+            {
+                triangle.default_sound,
+                triangle.position,
+                length,
+                0,
+                0
+            };
+            break;
+    }
 
     // 音長を変更する記号があれば
     if(submatches[1].str() != "")
@@ -263,7 +411,18 @@ void text_reader::add_rest(smatch submatches)
     }
 
     // 指定された音長だけ音符の位置を進める
-    position += length;
+    switch(track)
+    {
+        case Square_A:
+            square_a.position += length;
+            break;
+        case Square_B:
+            square_b.position += length;
+            break;
+        case Triangle: 
+            triangle.position += length;
+            break;
+    }
     note.length = length;
 
     // 音符の内容を標準出力に表示
@@ -273,37 +432,125 @@ void text_reader::add_rest(smatch submatches)
         << std::endl;
 
     // 音符を楽譜オブジェクトに格納する
-    raw_score.square_a.push_back(note);
+    switch(track)
+    {
+        case Square_A:
+            raw_score.square_a.push_back(note);
+            break;
+        case Square_B:
+            raw_score.square_b.push_back(note);
+            break;
+        case Triangle: 
+            raw_score.triangle.push_back(note);
+            break;
+    }
 }
 
-void text_reader::set_octave(smatch submatches)
+void text_reader::set_octave(smatch submatches, track track)
 {
     // 検出したトークンの1文字目が
     switch(submatches[0].str()[0])
     {
         // 大なり記号ならばオクターブを上げる
-        case '<' : ++default_octave; break;
+        case '<' : 
+            switch(track)
+            {
+                case Square_A:
+                    ++square_a.default_octave;
+                    break;
+                case Square_B:
+                    ++square_b.default_octave;
+                    break;
+                case Triangle:
+                    ++triangle.default_octave;
+                    break;
+            }
+            break;
 
         // 小なり記号ならばオクターブを下げる
-        case '>' : --default_octave; break;
+        case '>' : 
+            switch(track)
+            {
+                case Square_A:
+                    --square_a.default_octave;
+                    break;
+                case Square_B:
+                    --square_b.default_octave;
+                    break;
+                case Triangle:
+                    --triangle.default_octave;
+                    break;
+            }
+            break;
 
         // oならば指定されたオクターブに設定
         case 'o' : 
             if(submatches[1].str() != "")
-                default_octave = stoi(submatches[1].str());
+            switch(track)
+            {
+                case Square_A:
+                    square_a.default_octave = stoi(submatches[1].str());
+                    break;
+                case Square_B:
+                    square_b.default_octave = stoi(submatches[1].str());
+                    break;
+                case Triangle:
+                    triangle.default_octave = stoi(submatches[1].str());
+                    break;
+            }
+            break;
     }
 }
 
-void text_reader::set_length(smatch submatches)
+void text_reader::set_length(smatch submatches, track track)
 {
     // 指定された音長を設定
-    default_length = stoi(submatches[1].str());
+    switch(track)
+    {
+        case Square_A:
+            square_a.default_length = stoi(submatches[1].str());
+            break;
+        case Square_B:
+            square_b.default_length = stoi(submatches[1].str());
+            break;
+        case Triangle: 
+            triangle.default_length = stoi(submatches[1].str());
+            break;
+    }
 }
 
-void text_reader::set_volume(smatch submatches)
+void text_reader::set_volume(smatch submatches, track track)
 {
     // 指定された音量を設定
-    default_volume = stoi(submatches[1].str());
+    switch(track)
+    {
+        case Square_A:
+            square_a.default_volume = stoi(submatches[1].str());
+            break;
+        case Square_B:
+            square_b.default_volume = stoi(submatches[1].str());
+            break;
+        case Triangle: 
+            triangle.default_volume = stoi(submatches[1].str());
+            break;
+    }
+}
+
+void text_reader::set_instrument(smatch submatches, track track)
+{
+    // 指定された波形を設定
+    switch(track)
+    {
+        case Square_A:
+            square_a.default_sound = (instrument)stoi(submatches[1].str());
+            break;
+        case Square_B:
+            square_b.default_sound = (instrument)stoi(submatches[1].str());
+            break;
+        case Triangle: 
+            triangle.default_sound = (instrument)stoi(submatches[1].str());
+            break;
+    }
 }
 
 score text_reader::get_score() { return raw_score; }
