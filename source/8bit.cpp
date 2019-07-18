@@ -4,10 +4,50 @@
 
 using namespace retro_sound;
 
-int main()
+void halt(string message)
 {
-    text_reader reader("test.mml");
-    wave_writer writer("test.wav");
+    cout << message << endl;
+    exit(-1);
+}
+
+int main(int argc, char** argv)
+{
+    regex format_i(".+\\.mml");
+    regex format_o(".+\\.wav");
+
+    if(argc <= 1)
+        halt("以下のように入力してください.\n\n./8bit [-o <出力ファイル>] <入力ファイル>\n");
+
+    string file_i = "";
+    string file_o = "";
+    
+    if(strcmp(argv[1], "-o") == 0)
+    {
+        if(argc <= 3)
+            halt("以下のように入力してください.\n\n./8bit [-o <出力ファイル>] <入力ファイル>\n");
+
+        if(!regex_match(argv[2], format_o))
+            halt("出力ファイルのフォーマットが正しくありません.\n");
+
+        if(!regex_match(argv[3], format_i))
+            halt("入力ファイルのフォーマットが正しくありません.\n");
+
+        file_i = argv[3];
+        file_o = argv[2];
+    }
+    else
+    {
+        if(!regex_match(argv[1], format_i))
+            halt("入力ファイルのフォーマットが正しくありません.\n");
+
+        file_i = argv[1];
+        file_o = argv[1];
+        int l = file_i.length();
+        file_o.replace(l - 4, 4, ".wav");
+    }
+    
+    text_reader reader(file_i);
+    wave_writer writer(file_o);
     
     auto score_str = reader.read();
 

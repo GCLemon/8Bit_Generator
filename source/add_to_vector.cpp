@@ -80,7 +80,6 @@ void score_builder::add_note (smatch submatches)
         }
     }
     score.push(note);
-    cout << note.length.to_string() << endl;
     position += note.length;
 }
 
