@@ -3,11 +3,14 @@
 //    rational.hpp
 //
 
-
 #ifndef rational_hpp
 #define rational_hpp
 
 #include <math.h>
+#include <sstream>
+#include <string>
+
+using namespace std;
 
 //////////////////////////////////////////////////
 //
@@ -95,10 +98,21 @@ public:
     bool operator<= (int x);
     bool operator>= (int x);
 
+    bool operator<  (float x);
+    bool operator>  (float x);
+    bool operator<= (float x);
+    bool operator>= (float x);
+
+    bool operator<  (double x);
+    bool operator>  (double x);
+    bool operator<= (double x);
+    bool operator>= (double x);
+
     // 整数・小数に変換する
     int    to_int();
     float  to_float();
     double to_double();
+    string to_string();
 };
 
 #endif
