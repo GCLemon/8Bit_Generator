@@ -22,13 +22,14 @@ namespace retro_sound
     //
 
     const string t_str = "[A-D]";
-    const string n_str = "([a-g])([+,-,^,v]*)(([+,-]?[0-9]+)*)([/,_,.]*)(:([+,-])?([0-9]+))?";
-    const string r_str = "r(([+,-]?[0-9]+)*)([/,_,.]*)";
-    const string o_str = "[<,>]|o([0-9]+)";
-    const string l_str = "l([0-9]+)";
-    const string v_str = "v([0-9]+)";
-    const string at_i_str = "@i([0-9]+)";
-    const string at_m_str = "@m([0-9]+(\\.[0-9]+)?)";
+    const string n_str = "([a-g])([+,-,=,^,v]*)(([+,-]?\\d+)*)(\\*(\\d+(\\.\\d+)?))?([/,_,.]*)(:([+,-])?(\\d+))?";
+    const string r_str = "r(([+,-]?\\d+)*)([/,_,.]*)";
+    const string o_str = "[<,>]|o(\\d+)";
+    const string l_str = "l(\\d+)";
+    const string v_str = "v(\\d+)";
+    const string at_k_str = "@k([a-g])([+,-])?(maj|nim)";
+    const string at_i_str = "@i(\\d+)";
+    const string at_m_str = "@m(\\d+(\\.\\d+)?)";
 
     //////////////////////////////////////////////////
     //
@@ -67,6 +68,8 @@ namespace retro_sound
     {
         rational position;
         rational length;
+
+        double length_time;
 
         int scale;
         int volume;

@@ -25,6 +25,9 @@ queue<note> score_builder::convert(queue<string> note_str)
         if(regex_match(token_str, submatches, regex(v_str)))
             set_volume(submatches);
 
+        if(regex_match(token_str, submatches, regex(at_k_str)))
+            set_key(submatches);
+
         if(regex_match(token_str, submatches, regex(at_i_str)))
             set_sound(submatches);
 

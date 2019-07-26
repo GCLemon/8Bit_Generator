@@ -24,8 +24,8 @@ map<TRACK, queue<string>> text_reader::read()
     split_string.insert(make_pair(TRACK::D, queue<string>()));
 
     // トークンを検出するための正規表現
-    const regex token(t_str +"|"+ n_str +"|"+ o_str +"|"+ r_str +"|"+ l_str +"|"+ v_str
-                      +"|"+ at_i_str +"|"+ at_m_str);
+    const regex token(at_k_str +"|"+ at_i_str +"|"+ at_m_str +"|"+
+        t_str +"|"+ n_str +"|"+ o_str +"|"+ r_str +"|"+ l_str +"|"+ v_str);
 
     // ファイルから読み取った行
     string read_line = "";
@@ -53,7 +53,19 @@ map<TRACK, queue<string>> text_reader::read()
                     case 'D': current_track = TRACK::D; break;
                 }
             else
-                split_string.at(current_track).push(token_str);
+            {
+                if(regex_match(token_str, regex(at_k_str)))
+                {
+                    split_string.at(TRACK::A).push(token_str);
+                    split_string.at(TRACK::B).push(token_str);
+                    split_string.at(TRACK::C).push(token_str);
+                    split_string.at(TRACK::D).push(token_str);
+                }
+                else
+                {
+                    split_string.at(current_track).push(token_str);
+                }
+            }
         }
     }
 

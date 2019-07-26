@@ -20,6 +20,16 @@ namespace retro_sound
         int octave = 4;
         int volume = 100;
 
+        int key[7] = {
+            half::natural,
+            half::natural,
+            half::natural,
+            half::natural,
+            half::natural,
+            half::natural,
+            half::natural
+        };
+
         rational position = { 0, 4 };
 
         double (*sound)(double) = wave_square_4;
@@ -35,6 +45,7 @@ namespace retro_sound
         void set_volume(smatch submatches);
         void set_sound (smatch submatches);
         void set_tempo (smatch submatches);
+        void set_key   (smatch submatches);
 
     public:
         static queue<tempo_change> get_tempo_change();

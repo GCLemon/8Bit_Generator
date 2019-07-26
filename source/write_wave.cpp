@@ -27,11 +27,14 @@ void wave_writer::write_wave(queue<note> score, queue<tempo_change> change)
         #define pos note.position.to_double()
         #define len note.length.to_double()
 
+        // 音符の終端の位置を浮動小数で
+
         // 周波数を求める
         double freq = get_freq(note.scale);
 
         // ファイルに書き込む値
         ubyte velocity = note.volume / 2 * (*note.sound)(point / 44100.0 * freq);
+        if(beat > (pos + len * note.length_time) * 4) velocity = 0;
 
         // ファイルに書き込み
         ubyte v = 0;
