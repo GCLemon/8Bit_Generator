@@ -6,6 +6,7 @@
 #include <iostream>
 #include <map>
 #include <queue>
+#include <random>
 #include <regex>
 #include <sstream>
 #include <string>
@@ -22,12 +23,12 @@ namespace retro_sound
     //
 
     const string t_str = "[A-D]";
-    const string n_str = "([a-g])([+,-,=,^,v]*)(([+,-]?\\d+)*)(\\*(\\d+(\\.\\d+)?))?([/,_,.]*)(:([+,-])?(\\d+))?";
-    const string r_str = "r(([+,-]?\\d+)*)([/,_,.]*)";
-    const string o_str = "[<,>]|o(\\d+)";
+    const string n_str = "([a-g])([+\\-=^v]*)(([+\\-]?\\d+)*)(\\*(\\d+(\\.\\d+)?))?([/_.]*)(:([+\\-])?(\\d+))?(&)?";
+    const string r_str = "r(([+\\-]?\\d+)*)([/_.]*)";
+    const string o_str = "[<>]|o(\\d+)";
     const string l_str = "l(\\d+)";
     const string v_str = "v(\\d+)";
-    const string at_k_str = "@k([a-g])([+,-])?(maj|nim)";
+    const string at_k_str = "@k([a-g])([+\\-])?(maj|nim)";
     const string at_i_str = "@i(\\d+)";
     const string at_m_str = "@m(\\d+(\\.\\d+)?)";
 
@@ -36,7 +37,9 @@ namespace retro_sound
     //    音波を生成するための関数
     //
 
-    double get_freq(int scale);     // 周波数を求める
+    static int noise[441000];
+
+    double get_freq(double scale);     // 周波数を求める
 
     double wave_square_2(double x); // 50.0%パルス
     double wave_square_4(double x); // 25.0%パルス
@@ -66,13 +69,16 @@ namespace retro_sound
     // 音符の情報を持つ型
     struct note
     {
+        // 音の位置・長さ
         rational position;
         rational length;
-
         double length_time;
 
-        int scale;
-        int volume;
+        // 音の高さ・音量
+        int start_scale;
+        int start_volume;
+        int end_scale;
+        int end_volume;
 
         double (*sound)(double);
     };

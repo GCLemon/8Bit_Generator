@@ -4,7 +4,7 @@ using namespace retro_sound;
 
 void score_builder::add_note (smatch submatches)
 {
-    note note = { position, { 1, length }, 0.99, octave * 12, volume, sound };
+    note note = { position, { 1, length }, 1.0, octave * 12, volume, octave * 12, volume, sound };
     string match = "";
     int reset_scale = 0;
 
@@ -13,31 +13,31 @@ void score_builder::add_note (smatch submatches)
         switch(match[0])
         {
             case 'a':
-                note.scale += a + key[0];
+                note.start_scale += a + key[0];
                 reset_scale = octave * 12 + a;
                 break;
             case 'b':
-                note.scale += b + key[1];
+                note.start_scale += b + key[1];
                 reset_scale = octave * 12 + b;
                 break;
             case 'c':
-                note.scale += c + key[2];
+                note.start_scale += c + key[2];
                 reset_scale = octave * 12 + c;
                 break;
             case 'd':
-                note.scale += d + key[3];
+                note.start_scale += d + key[3];
                 reset_scale = octave * 12 + d;
                 break;
             case 'e':
-                note.scale += e + key[4];
+                note.start_scale += e + key[4];
                 reset_scale = octave * 12 + e;
                 break;
             case 'f':
-                note.scale += f + key[5];
+                note.start_scale += f + key[5];
                 reset_scale = octave * 12 + f;
                 break;
             case 'g': 
-                note.scale += g + key[6];
+                note.start_scale += g + key[6];
                 reset_scale = octave * 12 + g;
                 break;
         }
@@ -47,17 +47,17 @@ void score_builder::add_note (smatch submatches)
         for(char c : match)
             switch(c)
             {
-                case '+': ++note.scale; break;
-                case '-': --note.scale; break;
+                case '+': ++note.start_scale; break;
+                case '-': --note.start_scale; break;
                 case '=':
-                    note.scale = reset_scale;
+                    note.start_scale = reset_scale;
                     break;
                 case '^':
-                    note.scale += 12;
+                    note.start_scale += 12;
                     reset_scale += 12;
                     break;
                 case 'v':
-                    note.scale -= 12;
+                    note.start_scale -= 12;
                     reset_scale -= 12;
                     break;
             }
@@ -109,18 +109,55 @@ void score_builder::add_note (smatch submatches)
         string value = submatches[10].str();
         switch(submatches[11].str()[0])
         {
-            case '+': note.volume += stoi(value); break;
-            case '-': note.volume -= stoi(value); break;
-            default : note.volume  = stoi(value); break;
+            case '+': note.start_volume += stoi(value); break;
+            case '-': note.start_volume -= stoi(value); break;
+            default : note.start_volume  = stoi(value); break;
         }
     }
-    score.push(note);
+
+    if(submatches[12].str()[0] == '&')
+    {
+        if(note_holding)
+        {
+            // ホールドしている音符を追加
+            note_hold.end_scale = note.start_scale;
+            note_hold.end_volume = note.start_volume;
+
+            cout << note_hold.start_scale << endl;
+            cout << note_hold.start_volume << endl;
+            cout << note_hold.end_scale << endl;
+            cout << note_hold.end_volume << endl << endl;
+            
+            score.push(note_hold);
+        }
+
+        note_hold = note;
+        note_holding = true;
+    }
+    else
+    {
+        if(note_holding)
+        {
+            // ホールドしている音符を追加
+            note_hold.end_scale = note.start_scale;
+            note_hold.end_volume = note.start_volume;
+            score.push(note_hold);
+        }
+
+        // 作成した音符を追加
+        note.end_scale = note.start_scale;
+        note.end_volume = note.start_volume;
+        score.push(note);
+
+        note_holding = false;
+    }
+
     position += note.length;
 }
 
 void score_builder::add_rest (smatch submatches)
 {
-    note note = { position, { 1, length }, 0, 0, 0, sound };
+    note note = { position, { 1, length }, 0, 0, 0, 0, 0, sound };
     string match = "";
 
     match = submatches[1].str();

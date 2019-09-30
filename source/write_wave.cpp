@@ -7,9 +7,10 @@ void wave_writer::write_wave(queue<note> score, queue<tempo_change> change)
     // 読み込み用ストリームを開く
     ifstream reader(path, ios::binary);
 
-    uint   point = 0;   // ファイルポインタ
-    double beat  = 0;   // 拍
-    double tempo = 120; // テンポ
+    uint   point = 0;     // ファイルポインタ
+    double beat  = 0;     // 拍
+    double tempo = 120;   // テンポ
+    double freq_time = 0; // 経過速度を考慮した時間
 
     // ファイルの位置を合わせる
     writer.seekp(44);
@@ -27,14 +28,18 @@ void wave_writer::write_wave(queue<note> score, queue<tempo_change> change)
         #define pos note.position.to_double()
         #define len note.length.to_double()
 
-        // 音符の終端の位置を浮動小数で
+        // 音高・音量を求める
+        double m = (beat * 0.25 - pos) / len;
+        double scale = (double)note.start_scale * (1 - m) + (double)note.end_scale * m;
+        double volume = (double)note.start_volume * (1 - m) + (double)note.end_volume * m;
 
         // 周波数を求める
-        double freq = get_freq(note.scale);
+        double freq = get_freq(scale);
 
         // ファイルに書き込む値
-        ubyte velocity = note.volume / 2 * (*note.sound)(point / 44100.0 * freq);
+        ubyte velocity = volume / 2 * (*note.sound)(freq_time);
         if(beat > (pos + len * note.length_time) * 4) velocity = 0;
+        freq_time += freq / 44100.0;
 
         // ファイルに書き込み
         ubyte v = 0;

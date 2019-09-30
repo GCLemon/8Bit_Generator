@@ -32,10 +32,16 @@ namespace retro_sound
 
         rational position = { 0, 4 };
 
+        // 音色
         double (*sound)(double) = wave_square_4;
 
+        // 音符やテンポの変化
                queue<note>          score;
         static vector<tempo_change> change;
+
+        // vector に追加せずに保留している音符
+        note note_hold= { position, { 1, length }, 0, 0, 0, 0, 0, sound };
+        bool note_holding = false;
 
         void add_note  (smatch submathces);
         void add_rest  (smatch submathces);
