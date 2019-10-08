@@ -106,8 +106,8 @@ void score_builder::add_note (smatch submatches)
     match = submatches[9].str();
     if(match != "")
     {
-        string value = submatches[10].str();
-        switch(submatches[11].str()[0])
+        string value = submatches[11].str();
+        switch(submatches[10].str()[0])
         {
             case '+': note.start_volume += stoi(value); break;
             case '-': note.start_volume -= stoi(value); break;
@@ -163,13 +163,6 @@ void score_builder::add_rest (smatch submatches)
     match = submatches[1].str();
     if(match != "")
     {
-        if(submatches[1].str()[0] == '+'
-        || submatches[1].str()[0] == '-')
-        {
-            cerr << "エラー : 休符に半音記号は使えません." << endl;
-            exit(-1);
-        }
-
         note.length = { 0, 4 };
         string value = "";
         bool plus = true;

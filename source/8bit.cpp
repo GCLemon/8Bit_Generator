@@ -56,8 +56,7 @@ double retro_sound::wave_triangle(double x)
 // ノイズ
 double retro_sound::wave_noise(double x)
 {
-    int idx = x * 44100.0 / 440.0;
-    cout << idx << " : " << retro_sound::noise[idx % 441000] << endl;
+    int idx = x * 44100.0 / 1760.0;
     return retro_sound::noise[idx % 441000];
 }
 //--------------------------------------------------------------------------------
