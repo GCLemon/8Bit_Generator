@@ -39,7 +39,8 @@ namespace retro_sound
 
     static int noise[441000];
 
-    double get_freq(double scale);     // 周波数を求める
+    double get_freq(double scale);  // 周波数を求める
+    void create_random();           // 乱数を生成する
 
     double wave_square_2(double x); // 50.0%パルス
     double wave_square_4(double x); // 25.0%パルス
