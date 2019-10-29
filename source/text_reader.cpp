@@ -3,15 +3,9 @@
 
 using namespace retro_sound;
 
-text_reader::text_reader(string path)
+text_reader::text_reader(string final_code)
 {
-    reader = ifstream(path);
-
-    if(reader.fail())
-    {
-        cerr << "File open failed." << endl;
-        exit(-1);
-    }
+    this->final_code = final_code;
 }
 
 map<TRACK, queue<string>> text_reader::read()
@@ -27,44 +21,38 @@ map<TRACK, queue<string>> text_reader::read()
     const regex token(at_k_str +"|"+ at_i_str +"|"+ at_m_str +"|"+
         t_str +"|"+ n_str +"|"+ o_str +"|"+ r_str +"|"+ l_str +"|"+ v_str);
 
-    // ファイルから読み取った行
-    string read_line = "";
-
     // 現在のトラック
     TRACK current_track = TRACK::A;
 
     // 読み取った行それぞれについて処理
-    while(getline(reader, read_line))
-    {
-        // 文字列の先頭・末尾を取得
-        auto b = begin(read_line);
-        auto e = end(read_line);
+    // 文字列の先頭・末尾を取得
+    auto b = begin(final_code);
+    auto e = end(final_code);
 
-        // 検出したトークンを押し込む
-        for(sregex_iterator i(b, e, token), end; i != end; ++i)
+    // 検出したトークンを押し込む
+    for(sregex_iterator i(b, e, token), end; i != end; ++i)
+    {
+        string token_str = (*i).str();
+        if(regex_match(token_str, regex(t_str)))
+            switch(token_str[0])
+            {
+                case 'A': current_track = TRACK::A; break;
+                case 'B': current_track = TRACK::B; break;
+                case 'C': current_track = TRACK::C; break;
+                case 'D': current_track = TRACK::D; break;
+            }
+        else
         {
-            string token_str = (*i).str();
-            if(regex_match(token_str, regex(t_str)))
-                switch(token_str[0])
-                {
-                    case 'A': current_track = TRACK::A; break;
-                    case 'B': current_track = TRACK::B; break;
-                    case 'C': current_track = TRACK::C; break;
-                    case 'D': current_track = TRACK::D; break;
-                }
+            if(regex_match(token_str, regex(at_k_str)))
+            {
+                split_string.at(TRACK::A).push(token_str);
+                split_string.at(TRACK::B).push(token_str);
+                split_string.at(TRACK::C).push(token_str);
+                split_string.at(TRACK::D).push(token_str);
+            }
             else
             {
-                if(regex_match(token_str, regex(at_k_str)))
-                {
-                    split_string.at(TRACK::A).push(token_str);
-                    split_string.at(TRACK::B).push(token_str);
-                    split_string.at(TRACK::C).push(token_str);
-                    split_string.at(TRACK::D).push(token_str);
-                }
-                else
-                {
-                    split_string.at(current_track).push(token_str);
-                }
+                split_string.at(current_track).push(token_str);
             }
         }
     }

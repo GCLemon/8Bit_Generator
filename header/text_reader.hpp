@@ -16,10 +16,10 @@ namespace retro_sound
     class text_reader
     {
     private:
-        ifstream reader;
+        string final_code;
 
     public:
-        text_reader(string path);
+        text_reader(string final_code);
         map<TRACK, queue<string>> read();
     };
 }

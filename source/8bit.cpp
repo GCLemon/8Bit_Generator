@@ -1,3 +1,4 @@
+#include "../header/preprocessor.hpp"
 #include "../header/text_reader.hpp"
 #include "../header/score_builder.hpp"
 #include "../header/wave_writer.hpp"
@@ -110,8 +111,12 @@ int main(int argc, char** argv)
     for(int i = 0; i < 441000; ++i)
         retro_sound::noise[i] = (double)(random() % 2);
     
-    
-    text_reader reader(file_i);
+    preprocessor processor(file_i);
+    processor.read_file_all();
+    processor.expand_macro();
+    processor.detect_error();
+
+    text_reader reader(processor.get_final_code());
     wave_writer writer(file_o);
     
     auto score_str = reader.read();
