@@ -19,6 +19,17 @@ namespace retro_sound
 {
     //////////////////////////////////////////////////
     //
+    //    型定義
+    //
+    #if false
+    typedef double float_value;
+    #else
+    typedef rational float_value;
+    #define RATIONAL
+    #endif
+
+    //////////////////////////////////////////////////
+    //
     //    トークンを検出するための正規表現
     //
 
@@ -28,7 +39,7 @@ namespace retro_sound
     const string o_str = "[<>]|o(\\d+)";
     const string l_str = "l(\\d+)";
     const string v_str = "v(\\d+)";
-    const string at_k_str = "@k([a-g])([+\\-])?(maj|nim)";
+    const string at_k_str = "@k([a-g])([+\\-])?((maj)|(min))";
     const string at_i_str = "@i(\\d+)";
     const string at_m_str = "@m(\\d+(\\.\\d+)?)";
 
@@ -71,8 +82,8 @@ namespace retro_sound
     struct note
     {
         // 音の位置・長さ
-        rational position;
-        rational length;
+        float_value position;
+        float_value length;
         double length_time;
 
         // 音の高さ・音量
@@ -87,7 +98,7 @@ namespace retro_sound
     // 速度変化に関する情報を持つ型
     struct tempo_change
     {
-        rational position;
+        float_value position;
         double after_tempo;
     };
 }

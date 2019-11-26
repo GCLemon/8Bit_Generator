@@ -20,13 +20,15 @@ preprocessor::~preprocessor()
 
 void preprocessor::read_file_all()
 {
-    string line;
-    while(getline(reader, line)) code += line;
+    istreambuf_iterator<char> it(reader);
+    istreambuf_iterator<char> end;
+    code = string(it, end);
+    code += "\n";
 }
 
 void preprocessor::expand_macro()
 {
-    regex macro("(\\\\.+)\\s?=\\s?\"(.+)\"");
+    regex macro("\\s*(\\\\.+)\\s*=\\s*\"(.+)\"\n");
     for(sregex_iterator i(begin(code), end(code), macro), end; i != end; ++i)
     {
         // マクロのキーと値を取得
@@ -69,13 +71,30 @@ void preprocessor::expand_macro()
                 }
             }
     }
-
-    cout << code << endl;
 }
 
 void preprocessor::detect_error()
 {
+    // トークンを検出するための正規表現
+    const regex token(at_k_str +"|"+ at_i_str +"|"+ at_m_str +"|"+
+        t_str +"|"+ n_str +"|"+ o_str +"|"+ r_str +"|"+ l_str +"|"+ v_str);
 
+    const regex word(at_k_str +"|"+ at_i_str +"|"+ at_m_str +"|"+
+        t_str +"|"+ n_str +"|"+ o_str +"|"+ r_str +"|"+ l_str +"|"+ v_str + "|\\S+");
+
+    auto b = begin(code);
+    auto e = end(code);
+
+    for(sregex_iterator i(b, e, word), end; i != end; ++i)
+    {
+        string word_str = (*i).str();
+
+        if(!regex_match(word_str, token))
+        {
+            cerr << "Error occured near \"" << word_str << "\"." << endl;
+            exit(-1);
+        }
+    }
 }
 
 string preprocessor::get_final_code()

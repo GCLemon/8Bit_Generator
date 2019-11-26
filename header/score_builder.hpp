@@ -30,7 +30,11 @@ namespace retro_sound
             half::natural
         };
 
-        rational position = { 0, 4 };
+        #ifdef RATIONAL
+        float_value position = { 0, 4 };
+        #else
+        float_value position = 0;
+        #endif
 
         // 音色
         double (*sound)(double) = wave_square_4;
@@ -40,7 +44,11 @@ namespace retro_sound
         static vector<tempo_change> change;
 
         // vector に追加せずに保留している音符
-        note note_hold= { position, { 1, length }, 0, 0, 0, 0, 0, sound };
+        #ifdef RATIONAL
+        note note_hold = { position, { 1, length }, 0, 0, 0, 0, 0, sound };
+        #else
+        note note_hold = { position, 1.0 / length, 0, 0, 0, 0, 0, sound };
+        #endif
         bool note_holding = false;
 
         void add_note  (smatch submathces);
