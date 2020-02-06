@@ -28,48 +28,76 @@ void preprocessor::read_file_all()
 
 void preprocessor::expand_macro()
 {
-    regex macro("\\s*(\\\\.+)\\s*=\\s*\"(.+)\"\n");
-    for(sregex_iterator i(begin(code), end(code), macro), end; i != end; ++i)
+    regex macro_def ("\\s*\\\\([^\\{,\\}]+)\\s*(\\{(.+)\\})?\\s*=\\s*\"(.+)\"\n");
+    for(sregex_iterator i(begin(code), end(code), macro_def), end; i != end; ++i)
     {
         // マクロのキーと値を取得
-        string macro_str = (*i)[0].str();
         string macro_key = (*i)[1].str();
-        string macro_val = (*i)[2].str();
+        string macro_val = (*i)[3].str();
+        string macro_arg = (*i)[4].str();
 
         // マクロの重複を検出
-        if(macros.count(macro_key))
-        {
-            cerr << "Redefinition : " << macro_key << endl;
-            exit(-1);
-        }
+        for(macro m : macros)
+            if(m.key == macro_key)
+            {
+                cerr << "Redefinition : " << macro_key << endl;
+                exit(-1);
+            }
 
         // 読み込み済みマクロの登録
-        macros[macro_key] = macro_val;
-        macro_keys.push_back(macro_key);
+        macros.push_back({macro_key, macro_arg, macro_val});
     }
 
     // マクロ部分の削除
-    code = regex_replace(code, macro, "");
+    code = regex_replace(code, macro_def, "");
 
     bool replace_occur = true;
+
     while(replace_occur)
     {
         replace_occur = false;
 
-        for(string macro_key : macro_keys)
-
-            // キーが見つかった場合はすぐに置換する
-            if(code.find(macro_key) != string::npos)
+        for(macro m : macros)
+        {
+            // 引数ありマクロの処理
+            if(m.arg != "")
             {
-                replace_occur = true;
-
-                size_t pos = code.find(macro_key);
-                while (pos != string::npos)
+                regex macro_call("\\s*\\\\" + m.key + "\\s*\\{([^\\{\\}]+)\\}");
+                for(sregex_iterator i(begin(code), end(code), macro_call), end; i != end; ++i)
                 {
-                    code = code.replace(pos, macro_key.length(), macros[macro_key]);
-                    pos = code.find(macro_key);
+                    replace_occur = true;
+
+                    // マクロの引数を取得
+                    string macro_arg = (*i)[1].str();
+                    string macro_val = m.val;
+
+                    // マクロ引数の置換
+                    if(macro_arg != "")
+                    {
+                        size_t pos = macro_val.find(m.arg);
+                        while (pos != string::npos)
+                        {
+                            macro_val = macro_val.replace(pos, m.arg.length(), macro_arg);
+                            pos = macro_val.find(m.arg);
+                        }
+                    }
+
+                    code = code.replace((*i).position(), (*i).length(), macro_val);
                 }
             }
+            
+            // 引数なしマクロの処理
+            else
+            {
+                regex macro_call("\\s*\\\\" + m.key);
+                for(sregex_iterator i(begin(code), end(code), macro_call), end; i != end; ++i)
+                {
+                    replace_occur = true;
+                    code = code.replace((*i).position(), (*i).length(), m.val);
+                }
+            }
+            
+        }
     }
 }
 

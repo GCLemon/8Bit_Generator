@@ -11,13 +11,19 @@
 
 namespace retro_sound
 {
+    struct macro
+    {
+        string key;
+        string val;
+        string arg;
+    };
+
     class preprocessor
     {
     private:
         ifstream reader;
         string code;
-        map<string, string> macros;
-        vector<string> macro_keys;
+        vector<macro> macros;
 
     public:
         preprocessor(string path);

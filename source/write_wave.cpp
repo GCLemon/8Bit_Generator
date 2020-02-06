@@ -25,13 +25,8 @@ void wave_writer::write_wave(queue<note> score, queue<tempo_change> change)
     while(!score.empty())
     {
         // 定義
-        #ifdef RATIONAL
-        #define pos note.position.to_double()
-        #define len note.length.to_double()
-        #else
-        #define pos note.position
-        #define len note.length
-        #endif
+        double pos = note.position;
+        double len = note.length;
 
         // 音高・音量を求める
         double m = (beat * 0.25 - pos) / len;
@@ -61,7 +56,7 @@ void wave_writer::write_wave(queue<note> score, queue<tempo_change> change)
                 change.pop();
             }
 
-        // ファイルに書き込み & 拍を進める
+        // 拍を進める
         ++point;
         beat += tempo / 2646000.0;
 

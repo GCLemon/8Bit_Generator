@@ -4,11 +4,7 @@ using namespace retro_sound;
 
 void score_builder::add_note (smatch submatches)
 {
-    #ifdef RATIONAL
-    note note = { position, { 1, length }, 1.0, octave * 12, volume, octave * 12, volume, sound };
-    #else
     note note = { position, 1.0 / length, 1.0, octave * 12, volume, octave * 12, volume, sound };
-    #endif
     string match = "";
     int reset_scale = 0;
 
@@ -69,11 +65,7 @@ void score_builder::add_note (smatch submatches)
     match = submatches[3].str();
     if(match != "")
     {
-        #ifdef RATIONAL
-        note.length = { 0, 4 };
-        #else
         note.length = 0;
-        #endif
         string value = "";
         bool   plus  = true;
 
@@ -81,20 +73,12 @@ void score_builder::add_note (smatch submatches)
             switch (c)
             {
                 case '+':
-                    #ifdef RATIONAL
-                    note.length += { plus ? 1 : -1, stoi(value) };
-                    #else
                     note.length += (plus ? 1.0 : -1.0) / stod(value) ;
-                    #endif
                     value = "";
                     plus = true;
                     break;
                 case '-':
-                    #ifdef RATIONAL
-                    note.length += { plus ? 1 : -1, stoi(value) };
-                    #else
                     note.length += (plus ? 1.0 : -1.0) / stod(value) ;
-                    #endif
                     value = "";
                     plus = false;
                     break;
@@ -102,11 +86,7 @@ void score_builder::add_note (smatch submatches)
                     value += c; break;
             }
 
-        #ifdef RATIONAL
-        note.length += { plus ? 1 : -1, stoi(value) };
-        #else
         note.length += (plus ? 1.0 : -1.0) / stod(value) ;
-        #endif
     }
 
     match = submatches[5].str();
@@ -121,11 +101,7 @@ void score_builder::add_note (smatch submatches)
                 case '_': note.length *= 2; break;
                 case '/': note.length /= 2; break;
                 case '.':
-                    #ifdef RATIONAL
-                    note.length *= { 3, 2 }; break;
-                    #else
                     note.length *= 1.5; break;
-                    #endif
             }
 
     match = submatches[9].str();
@@ -177,21 +153,13 @@ void score_builder::add_note (smatch submatches)
 
 void score_builder::add_rest (smatch submatches)
 {
-    #ifdef RATIONAL
-    note note = { position, { 1, length }, 0, 0, 0, 0, 0, sound };
-    #else
     note note = { position, 1.0 / length, 1.0, 0, 0, 0, 0, sound };
-    #endif
     string match = "";
 
     match = submatches[1].str();
     if(match != "")
     {
-        #ifdef RATIONAL
-        note.length = { 0, 4 };
-        #else
         note.length = 0;
-        #endif
         string value = "";
         bool plus = true;
 
@@ -199,20 +167,12 @@ void score_builder::add_rest (smatch submatches)
             switch (c)
             {
                 case '+':
-                    #ifdef RATIONAL
-                    note.length += { plus ? 1 : -1, stoi(value) };
-                    #else
                     note.length += (plus ? 1.0 : -1.0) / stod(value) ;
-                    #endif
                     value = "";
                     plus = true;
                     break;
                 case '-':
-                    #ifdef RATIONAL
-                    note.length += { plus ? 1 : -1, stoi(value) };
-                    #else
                     note.length += (plus ? 1.0 : -1.0) / stod(value) ;
-                    #endif
                     value = "";
                     plus = false;
                     break;
@@ -229,11 +189,7 @@ void score_builder::add_rest (smatch submatches)
                 case '_': note.length *= 2; break;
                 case '/': note.length /= 2; break;
                 case '.':
-                    #ifdef RATIONAL
-                    note.length *= { 3, 2 }; break;
-                    #else
                     note.length *= 1.5; break;
-                    #endif
             }
             
     score.push(note);

@@ -43,6 +43,10 @@ queue<note> score_builder::convert(queue<string> note_str)
 queue<tempo_change> score_builder::get_tempo_change()
 {
     queue<tempo_change> que;
+    sort(change.begin(), change.end(), [](const tempo_change &a, const tempo_change &b)
+    {
+        return a.position < b.position;
+    });
     for(auto c : change) que.push(c);
     return que;
 }

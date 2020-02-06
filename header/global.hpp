@@ -1,6 +1,7 @@
 #ifndef global_hpp
 #define global_hpp
 
+#include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -11,22 +12,10 @@
 #include <sstream>
 #include <string>
 
-#include "../header/rational.hpp"
-
 using namespace std;
 
 namespace retro_sound
 {
-    //////////////////////////////////////////////////
-    //
-    //    型定義
-    //
-    #if false
-    typedef double float_value;
-    #else
-    typedef rational float_value;
-    #define RATIONAL
-    #endif
 
     //////////////////////////////////////////////////
     //
@@ -82,8 +71,8 @@ namespace retro_sound
     struct note
     {
         // 音の位置・長さ
-        float_value position;
-        float_value length;
+        double position;
+        double length;
         double length_time;
 
         // 音の高さ・音量
@@ -98,7 +87,7 @@ namespace retro_sound
     // 速度変化に関する情報を持つ型
     struct tempo_change
     {
-        float_value position;
+        double position;
         double after_tempo;
     };
 }

@@ -1,0 +1,94 @@
+A @m280 @i1 @kgmin B @i0 @kgmin C @i3 @kgmin
+
+A o3 l8 gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >eg<ceg<c >>a<g-a<dg-a <d>ag>agd
+B rrrrrrrrrrrrrrrrrrrrrrrr
+C o3 g&g&g e&e&e f&f&f d&d&d e&e&e > b&b&b a&a&a < d&d&d
+A >gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >>e=<a<d-e=g<d- >>a<a<dg-ag d>ag-ab<c
+B rrrrrrrrrrrrrrrrrrrrrrrr
+C o3 g&g&g e&e&e f&f&f > b&b&b a&a&a < d-&d-&d- d&d&d&d&d&d
+
+A >>gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >bg<ceg<c >>a<g-a<dg-a <d>ag>agd
+B v80 o2 l8 g_<erer >g_<erer >f_<drdr >f_<drdr >e_<crcr >e_<crcr >d_brbr d_brbr
+C g&g&g e&e&e f&f&f d&d&d e&e&e > b&b&b a&a&a < d&d&d
+A >gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >>e=<a<d-e=g<d- >>a<a<dg-ag d>ag-ab<c
+B g_<erer >g_<erer >f_<drdr >f_<drdr >e_<crcr >e_<crcr >d_brbr d_brbr
+C o3 g&g&g e&e&e f&f&f > b&b&b a&a&a < d-&d-&d- d&d&d&d&d&d
+
+A v80 >>>gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >bg<ceg<c >>a<g-a<dg-a <d>ag>agd
+B v100 o4 l4 g<bc a>b<g> g<bc a>b_ rb<d- e=a<d- d>ag g-16g=16g-2+8
+C g&g&g e&e&e f&f&f d&d&d e&e&e > b&b&b a&a&a < d&d&d
+A >gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >>e=<a<d-e=g<d- >>a<a<dg-ag d>ag-ab<c
+B l4 >g<bc a>b<g> g<bc a>b_ rb<d- e=c+>b a_. <d_.
+C o3 g&g&g e&e&e f&f&f > b&b&b a&a&a < d-&d-&d- d&d&d&d&d&d
+
+A v80 >>gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >bg<ceg<c >>a<g-a<dg-a <d>ag>agd
+B v100 o4 l4 g<bc a>b<g> g<bc a>b_ rb<d- e=a<d- d>ag g-16g=16g-2+8
+C g&g&g e&e&e f&f&f d&d&d e&e&e > b&b&b a&a&a < d&d&d
+A >gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >>e=<a<d-e=g<d- >>a<a<dg-ag d>ag-a<l16v100dc>ba
+B l4 >g<bc a>b<g> g<bc a>b_ rb<d- e=c+>b a_. <d_.
+C o3 g&g&g e&e&e f&f&f > b&b&b a&a&a < d-&d-&d- d&d&d&d&d&d
+
+A l4<gab<cd_g_g_fgd16c16d1-8 cd>g_<cd>gdg_aba_l8<dc>ba l4gab<cd_gab/<c/d>afgda/b/<c l8d>bg<cc_>b_afdff_ab_.a_g_f_>b<c>gabfga
+B v70 o2 g<g>g<g>a<a>a<a>b<b>b<b>a<a>a<a> g<g>g<g>g-<g->g-<g->b<b>b<bc<c>c<c>
+B >g<g>g<g>a<a>a<a>b<b>b<b>a<a>a<a> g<g>g<g>g-<g->g-<g->g<g>g<g>a<a>a<a>
+C o3 l1 gaba gg-b<c> gaba gg-ga
+
+A @kemin B @kemin C @kemin
+
+A l4efgab_<e_e_de>b16a16b1-8 abe_abe>b<e_fgf_l8bagf l4efgab_<efg/a/bfde>b<f/g/a l8bgeaa_g_fd>b<dd_fg_.f_e_d_>gaefgdef
+B e<e>e<e>f<f>f<f>g<g>g<g>f<f>f<f> e<e>e<e>d+<d+>d+<d+>g<g>g<g>a<a>a<a>
+B e<e>e<e>f<f>f<f>g<g>g<g>f<f>f<f> e<e>e<e>d+<d+>d+<d+>e<e>e<e>f<f>f<f>
+C o3 l1 efgf ed+ga efgf ed+ef
+
+A l4efgab_<e_e_de>b16a16b1-8 abe_abe>b<e_fgf_l8bagf l4efgab_<efg/a/bfde>b<f/g/a l8bgeaa_g_fd>b<dd_fg_.f_e_d_>gaefgdef g1+1
+B e<e>e<e>f<f>f<f>g<g>g<g>f<f>f<f> e<e>e<e>d+<d+>d+<d+>g<g>g<g>a<a>a<a>
+B e<e>e<e>f<f>f<f>g<g>g<g>f<f>f<f> e<e>e<e>d+<d+>d+<d+>e<e>e<e>f<f>f<f> l1rr
+C o3 l1 efgf ed+ga efgf ed+ef e&e
+
+A l8 >egb<egb >eg<ceg<c >>dfa<dfa >dfb<dfb >ceg<ceg >cea<cea >>b<e-fb<e-f bfe>fe>b
+B l4 rrrrrrrrrrrrrrrrrrrrrrrr
+C l4 o3 e&e&e c&c&c d&d&d > b&b&b < c&c&c > a&a&a f&f&f b&b&b
+
+A <egb<egb >eg<ceg<c >>dfa<dfa >dfb<dfb >ceg<ceg >c+fb-<c+eb- >f<fb<e-fe >bfe-fga
+B l4 rrrrrrrrrrrrrrrrrrrrrrrr
+C l4 o3 e&e&e c&c&c d&d&d > a&a&a f&f&f b-&b-&b- b&b&b&b&b&b
+
+A @kgmin B @kgmin C @kgmin
+
+A >gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >bg<ceg<c >>a<g-a<dg-a <d>ag>agd
+B v80 o2 l8 g_<erer >g_<erer >f_<drdr >f_<drdr >e_<crcr >e_<crcr >d_brbr d_brbr
+C g&g&g e&e&e f&f&f d&d&d e&e&e > b&b&b a&a&a < d&d&d
+A >gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >>e=<a<d-e=g<d- >>a<a<dg-ag d>ag-ab<c
+B g_<erer >g_<erer >f_<drdr >f_<drdr >e_<crcr >e_<crcr >d_brbr d_brbr
+C o3 g&g&g e&e&e f&f&f > b&b&b a&a&a < d-&d-&d- d&d&d&d&d&d
+
+A v80 >>>gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >bg<ceg<c >>a<g-a<dg-a <d>ag>agd
+B v100 o4 l4 g<bc a>b<g> g<bc a>b_ rb<d- e=a<d- d>ag g-16g=16g-2+8
+C g&g&g e&e&e f&f&f d&d&d e&e&e > b&b&b a&a&a < d&d&d
+A >gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >>e=<a<d-e=g<d- >>a<a<dg-ag d>ag-ab<c
+B l4 >g<bc a>b<g> g<bc a>b_ rb<d- e=c+>b a_. <d_.
+C o3 g&g&g e&e&e f&f&f > b&b&b a&a&a < d-&d-&d- d&d&d&d&d&d
+
+A v80 >>gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >bg<ceg<c >>a<g-a<dg-a <d>ag>agd
+B v100 o4 l4 g<bc a>b<g> g<bc a>b_ rb<d- e=a<d- d>ag g-16g=16g-2+8
+C g&g&g e&e&e f&f&f d&d&d e&e&e > b&b&b a&a&a < d&d&d
+A >gb<dgb<d >>gb<egb<e >>fa<cfa<c >>fa<dfa<d >>egb<egb >>e=<a<d-e=g<d- >>a<a<dg-ag d>ag-a<l16v100dc>ba
+B l4 >g<bc a>b<g> g<bc a>b_ rb<d- e=c+>b a_. <d_.
+C o3 g&g&g e&e&e f&f&f > b&b&b a&a&a < d-&d-&d- d&d&d&d&d&d
+
+A l4<gab<cd_g_g_fgd16c16d1-8 cd>g_<cd>gdg_aba_l8<dc>ba l4gab<cd_gab/<c/d>afgda/b/<c l8d>bg<cc_>b_afdff_ab_.a_g_f_>b<c>gabfga
+B v70 o2 g<g>g<g>a<a>a<a>b<b>b<b>a<a>a<a> g<g>g<g>g-<g->g-<g->b<b>b<bc<c>c<c>
+B >g<g>g<g>a<a>a<a>b<b>b<b>a<a>a<a> g<g>g<g>g-<g->g-<g->g<g>g<g>a<a>a<a>
+C o3 l1 gaba gg-b<c> gaba gg-ga
+
+A @kemin B @kemin C @kemin
+
+A l4efgab_<e_e_de>b16a16b1-8 abe_abe>b<e_fgf_l8bagf l4efgab_<efg/a/bfde>b<f/g/a l8bgeaa_g_fd>b<dd_fg_.f_e_d_>gaefgdef
+B e<e>e<e>f<f>f<f>g<g>g<g>f<f>f<f> e<e>e<e>d+<d+>d+<d+>g<g>g<g>a<a>a<a>
+B e<e>e<e>f<f>f<f>g<g>g<g>f<f>f<f> e<e>e<e>d+<d+>d+<d+>e<e>e<e>f<f>f<f>
+C o3 l1 efgf ed+ga efgf ed+ef
+
+A l4efgab_<e_e_de>b16a16b1-8 abe_abe>b<e_fgf_l8bagf l4efgab_<efg/a/bfde>b<f/g/a l8bgeaa_g_fd>b<dd_fg_.f_e_d_>gaefgdef g1+1
+B e<e>e<e>f<f>f<f>g<g>g<g>f<f>f<f> e<e>e<e>d+<d+>d+<d+>g<g>g<g>a<a>a<a>
+B e<e>e<e>f<f>f<f>g<g>g<g>f<f>f<f> e<e>e<e>d+<d+>d+<d+>e<e>e<e>f<f>f<f> l1rr
+C o3 l1 efgf ed+ga efgf ed+ef e&e&e&e

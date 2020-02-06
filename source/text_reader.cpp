@@ -1,4 +1,3 @@
-#include "../header/global.hpp"
 #include "../header/text_reader.hpp"
 
 using namespace retro_sound;
@@ -42,19 +41,7 @@ map<TRACK, queue<string>> text_reader::read()
                 case 'D': current_track = TRACK::D; break;
             }
         else
-        {
-            if(regex_match(token_str, regex(at_k_str)))
-            {
-                split_string.at(TRACK::A).push(token_str);
-                split_string.at(TRACK::B).push(token_str);
-                split_string.at(TRACK::C).push(token_str);
-                split_string.at(TRACK::D).push(token_str);
-            }
-            else
-            {
-                split_string.at(current_track).push(token_str);
-            }
-        }
+            split_string.at(current_track).push(token_str);
     }
 
     // 分断された文字列が4つのキューになって戻される
